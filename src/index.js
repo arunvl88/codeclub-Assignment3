@@ -26,6 +26,11 @@ export default {
 
 		const OUTPUT = { Message: randomMessage[random_number]};
 
+		// Set the Content-Type header to application/json
+		const headers = {
+			'Content-Type': 'application/json'
+		};
+
 		// Return a JSON response with status code 200 OK
 		return new Response(JSON.stringify(OUTPUT), {
 		  status: 200,
