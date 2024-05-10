@@ -10,36 +10,49 @@
 
 export default {
 	async fetch(request, env, ctx) {
-	  // Check if the request method is POST
+	  // Check if the request method is GET
 	  if (request.method === 'GET') {
-		// Define key value pairs
-		const randomMessage = {
-			1: "Hola 1",
-			2: "Hola 2",
-			3: "Hola 3",
-			4: "Hola 4",
-		  };
-
-		const max = 4;
-		
-		const random_number = Math.floor(Math.random() * max) + 1;
-
-		const OUTPUT = { Message: randomMessage[random_number]};
-
-		// Set the Content-Type header to application/json
-		const headers = {
-			'Content-Type': 'application/json'
-		};
-
-		// Return a JSON response with status code 200 OK
-		return new Response(JSON.stringify(OUTPUT), {
-		  status: 200,
-		  headers: headers
-		});
+		// Define the URL of your origin server
+		const originURL = 'https://bitcoin-mantra.com/';
+  
+		try {
+		  // Fetch data from the origin server
+		  const response = await fetch(originURL);
+  
+		  // Check if the response is successful (status code 200)
+		  if (response.ok) {
+			// Get the response body as text
+			const responseBody = await response.text();
+  
+			// Set the Content-Type header to match the origin response
+			const headers = {
+			  'Content-Type': response.headers.get('Content-Type')
+			};
+  
+			// Return the origin response with status code 200 OK
+			return new Response(responseBody, {
+			  status: 200,
+			  headers: headers
+			});
+		  } else {
+			// If the origin server returns an error status code, return the status code with an error message
+			return new Response(`Error: ${response.status} ${response.statusText}`, {
+			  status: response.status
+			});
+		  }
+		} catch (error) {
+		  // If an error occurs during the fetch operation, return an error message
+		  return new Response('Error fetching data from origin server', {
+			status: 500
+		  });
+		}
 	  } else {
 		// For other request methods, return the default response
-		return new Response('Use GET request');
+		return new Response('Use GET request', {
+		  status: 405
+		});
 	  }
 	},
   };
+  
   
