@@ -13,7 +13,16 @@ export default {
 	  // Check if the request method is GET
 	  if (request.method === 'GET') {
 		// Define the URL of your origin server
-		const originURL = 'https://bitcoin-mantra.com/';
+		let originURL = 'https://bitcoin-mantra.com/';
+  
+		// Check if the request is coming from a suspected bot based on bot score
+		const botScore = request.cf.botManagement.score;
+		
+		// Check if bot score is less than 30 and not Null
+		if (botScore && botScore < 30) {
+		  // If the bot score is less than 30, redirect traffic to a different origin
+		  originURL = 'https://httpbin.org/get';
+		}
   
 		try {
 		  // Fetch data from the origin server
@@ -54,5 +63,6 @@ export default {
 	  }
 	},
   };
+  
   
   
